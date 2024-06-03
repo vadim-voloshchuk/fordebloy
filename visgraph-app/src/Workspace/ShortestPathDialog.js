@@ -23,24 +23,24 @@ const ShortestPathDialog = ({ open, onClose, onCalculate, nodes, edges }) => {
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Calculate Shortest Path</DialogTitle>
+            <DialogTitle>Вычисление кратчайшего пути</DialogTitle>
             <DialogContent>
                 <TextField
-                    label="Start Node"
+                    label="Начальная вершина"
                     fullWidth
                     value={startNode}
                     onChange={(e) => setStartNode(e.target.value)}
                 />
                 <TextField
-                    label="End Node"
+                    label="Конеченая вершина"
                     fullWidth
                     value={endNode}
                     onChange={(e) => setEndNode(e.target.value)}
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="primary">Cancel</Button>
-                <Button onClick={handleCalculate} color="primary">Calculate</Button>
+                <Button onClick={onClose} color="primary">Закрыть</Button>
+                <Button onClick={handleCalculate} color="primary">Вычислить</Button>
             </DialogActions>
         </Dialog>
     );

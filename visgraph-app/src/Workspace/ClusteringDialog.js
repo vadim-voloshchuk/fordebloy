@@ -17,11 +17,11 @@ const ClusteringDialog = ({ open, onClose, onCluster }) => {
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Cluster Graph</DialogTitle>
-            <DialogContent>
+            <DialogTitle>Кластеризация графа</DialogTitle>
+            <DialogContent sx={{ marginTop: '10px', paddingTop: '10px !important' }}>
                 <TextField
                     select
-                    label="Clustering Method"
+                    label="Метод кластеризации"
                     value={method}
                     onChange={(e) => setMethod(e.target.value)}
                     fullWidth
@@ -33,7 +33,7 @@ const ClusteringDialog = ({ open, onClose, onCluster }) => {
                 {(method === 'spectral' || method === 'kmeans') && (
                     <TextField
                         margin="dense"
-                        label="Number of Clusters"
+                        label="Количество кластеров"
                         type="number"
                         value={nClusters}
                         onChange={(e) => setNClusters(e.target.value)}
@@ -43,10 +43,10 @@ const ClusteringDialog = ({ open, onClose, onCluster }) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">
-                    Cancel
+                    Закрыть
                 </Button>
                 <Button onClick={handleCluster} color="primary">
-                    Cluster
+                    Кластеризация
                 </Button>
             </DialogActions>
         </Dialog>

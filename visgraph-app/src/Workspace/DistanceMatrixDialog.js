@@ -33,7 +33,7 @@ const parseMatrixString = (matrixString) => {
 const DistanceMatrixDialog = ({ open, onClose, matrixString }) => {
     const matrix = matrixString;
     const hasMatrix = matrix && Object.keys(matrix).length > 0;
-    
+
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg">
             <DialogTitle>Distance Matrix</DialogTitle>
@@ -71,7 +71,7 @@ const DistanceMatrixDialog = ({ open, onClose, matrixString }) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">
-                    Close
+                    Закрыть
                 </Button>
             </DialogActions>
         </Dialog>

@@ -289,7 +289,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
 
         try {
             const response = await axios.post('http://localhost:5000/shortest-path', requestData);
-        
+
             if (response.data.path) {
                 const pathEdges = [];
                 for (let i = 0; i < response.data.path.length - 1; i++) {
@@ -380,7 +380,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                                         onChange={(e) => setNewEdge({ ...newEdge, directed: e.target.checked })}
                                     />
                                 }
-                                label="Ориентированная?"
+                                label="Ориентированная"
                             />
                             <TextField
                                 margin="dense"
