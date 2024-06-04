@@ -1,0 +1,30 @@
+.cont_image {
+    display: flex;
+    gap: 50px;
+    justify-content: center;
+    /* justify-content: space-between; */
+    align-items: center;
+    padding-bottom: 30px;
+}
+
+.cont_image_big {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stack_img {
+    width: 150px;
+    height: 150px;
+}
+
+.stack_img_big {
+    width: 400px;
+    height: 200px;
+}
+
+.stack_img_big_vis {
+    width: 650px;
+    height: 200px;
+    padding-bottom: 40px;
+}
