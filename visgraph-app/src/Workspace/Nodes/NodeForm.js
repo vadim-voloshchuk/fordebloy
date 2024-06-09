@@ -26,7 +26,7 @@ const NodeForm = ({ selectedNodeId, onAddNode, onUpdateNode, onDeleteNode }) => 
 
     // Вызываем функцию добавления вершины
     onAddNode({ id, label, title: nodeType });
-    
+
     // Очищаем поле ввода типа вершины после добавления
     setNodeType('');
   };

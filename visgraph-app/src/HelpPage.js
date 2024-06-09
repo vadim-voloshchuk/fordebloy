@@ -13,8 +13,8 @@ import Footer from './Footer/footer';
 
 const HelpPage = () => {
     return (
-    <>
-        <Container>
+    <div>
+        <div className={styles.landing_page}>
             <div style={{ textAlign: 'center' }}>
                 <p style={{ fontSize: '20px' }}>Основная информация</p>
                 <p style={{ textAlign: 'justify' }}>
@@ -56,9 +56,9 @@ const HelpPage = () => {
                 </div>
             </div>
 
-        </Container>
+        </div>
         <Footer />
-    </>
+    </div>
     );
 };
 

@@ -1,0 +1,95 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    /* width: 100%; */
+    padding: 0 20px;
+    height: 90px;
+    background-color: #1976D2;
+    color: #FFF;
+}
+
+.logo {
+    font-size: clamp(10px, 30vw,40px);
+    font-style: normal;
+    line-height: normal;
+    text-transform: uppercase;
+    align-items: center;
+    margin: 15px;
+    padding: 5px;
+}
+
+.name_project {
+    display: flex;
+    align-items: center;
+    color: #FFF;
+    font-family: Julius Sans One;
+
+    font-size: clamp(10px, 6vw,36px);
+    font-style: normal;
+    font-weight: 200;
+    line-height: normal;
+    text-transform: uppercase;
+}
+
+.menu {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 20px;
+    /* justify-content: space-between; */
+}
+
+.menu_main {
+    gap: 10px;
+    color: #FFF;
+    font-family: Julius Sans One;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration: none;
+}
+
+.git {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu_docs {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    color: #FFF;
+    font-family: Julius Sans One;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration: none;
+}
+
+@media (max-width: 1024px) {
+    .name_project {
+        display: none;
+    }
+}
+
+@media (max-width: 605px) {
+    .header {
+        display: block;
+        /* width: 100vw; */
+        height: 125px;
+    }
+
+    .menu_main,
+    .menu {
+        display: block;
+        text-align: center;
+        padding: 5px;
+    }
+
+    .logo {
+        display: none;
+    }
+}

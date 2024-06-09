@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import NodeForm from './Nodes/NodeForm';
 import NodeSearch from './Nodes/NodeSearch';
 import NetworkChart from './NetworkChart';
 import GraphInfoPanel from './GraphInfoPanel';
@@ -57,7 +56,19 @@ const Workspace = () => {
     const [edges, setEdges] = useState([]);
     const [filteredNodes, setFilteredNodes] = useState([]);
     const [filteredEdges, setFilteredEdges] = useState([]);
-    
+    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 800);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobileView(window.innerWidth <= 800);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // Удаляем слушатель при размонтировании компонента
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const [shortestPathDialogOpen, setShortestPathDialogOpen] = useState(false);
     const [clusteringDialogOpen, setClusteringDialogOpen] = useState(false);
     const [distanceMatrixDialogOpen, setDistanceMatrixDialogOpen] = useState(false); // State to control the Distance Matrix Dialog
@@ -155,15 +166,15 @@ const Workspace = () => {
     const calculateGraphCharacteristics = async () => {
         const degrees = nodes.map(node => edges.filter(edge => edge.from === node.id || edge.to === node.id).length);
         const maxDegree = Math.max(...degrees);
-    
+
         try {
             const response = await axios.post('http://localhost:5000/graph-characteristics', {
                 nodes,
                 edges
             });
-    
+
             console.log(response.data);
-    
+
             setGraphCharacteristics({
                 nodeCount: nodes.length,
                 edgeCount: edges.length,
@@ -175,13 +186,13 @@ const Workspace = () => {
                 diameter: response.data.diameter,
                 centralities: response.data.centralities
             });
-    
+
             setDistanceMatrix(response.data.distances);  // Store the distance matrix
         } catch (error) {
             console.error('Error calculating graph characteristics', error);
         }
     };
-    
+
 
     const handleShortestPathClick = () => {
         setShortestPathDialogOpen(true);
@@ -257,48 +268,54 @@ const Workspace = () => {
         setNodes(originalNodes);
         setEdges(originalEdges);
     };
-    
+
     return (
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-            <GraphInfoPanel {...graphCharacteristics} />
-            <NodeSearch 
-                nodes={nodes} 
-                edges={edges} 
-                onFilterNodes={handleFilterNodes}
-                onFilterEdges={handleFilterEdges}
-                onShortestPathClick={handleShortestPathClick}
-                onClusteringClick={handleClusteringClick}
-                onCalculateMatrix={handleOpenDistanceMatrixDialog}
-                onResetFilters = {handleResetFilters}
-            />
-            <NetworkChart
-                nodes={nodes}
-                edges={edges}
-                onNodeClick={handleNodeClick}
-                onDeleteNode={handleDeleteNode}
-                onUpdateNode={handleUpdateNode}
-                onDeleteEdge={handleDeleteEdge}
-                onUpdateEdge={handleUpdateEdge}
-                onAddNode={handleAddNode}
-                onAddEdge={handleAddEdge} 
-            />
-            <ShortestPathDialog
-                open={shortestPathDialogOpen}
-                onClose={() => setShortestPathDialogOpen(false)}
-                onCalculate={handleShortestPathCalculate}
-            />
-            <ClusteringDialog
-                open={clusteringDialogOpen}
-                onClose={() => setClusteringDialogOpen(false)}
-                onCluster={handleClustering}
-            />
-            <DistanceMatrixDialog
-                open={distanceMatrixDialogOpen}
-                onClose={() => setDistanceMatrixDialogOpen(false)}
-                matrixString  ={distanceMatrix}
-            />
+            {isMobileView ? (
+                <div style={{ textAlign: 'center', marginTop: '20%', fontSize: '24px' }}>Пожалуйста воспользуйтесь версией для ПК :)</div>
+            ) : (
+                <>
+                <GraphInfoPanel {...graphCharacteristics} />
+                <NodeSearch
+                    nodes={nodes}
+                    edges={edges}
+                    onFilterNodes={handleFilterNodes}
+                    onFilterEdges={handleFilterEdges}
+                    onShortestPathClick={handleShortestPathClick}
+                    onClusteringClick={handleClusteringClick}
+                    onCalculateMatrix={handleOpenDistanceMatrixDialog}
+                    onResetFilters = {handleResetFilters}
+                />
+                <NetworkChart
+                    nodes={nodes}
+                    edges={edges}
+                    onNodeClick={handleNodeClick}
+                    onDeleteNode={handleDeleteNode}
+                    onUpdateNode={handleUpdateNode}
+                    onDeleteEdge={handleDeleteEdge}
+                    onUpdateEdge={handleUpdateEdge}
+                    onAddNode={handleAddNode}
+                    onAddEdge={handleAddEdge}
+                />
+                <ShortestPathDialog
+                    open={shortestPathDialogOpen}
+                    onClose={() => setShortestPathDialogOpen(false)}
+                    onCalculate={handleShortestPathCalculate}
+                />
+                <ClusteringDialog
+                    open={clusteringDialogOpen}
+                    onClose={() => setClusteringDialogOpen(false)}
+                    onCluster={handleClustering}
+                />
+                <DistanceMatrixDialog
+                    open={distanceMatrixDialogOpen}
+                    onClose={() => setDistanceMatrixDialogOpen(false)}
+                    matrixString  ={distanceMatrix}
+                />
+            </>
+            )}
         </div>
-    );    
+    );
 };
 
 export default Workspace;

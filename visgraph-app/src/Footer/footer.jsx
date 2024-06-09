@@ -9,7 +9,7 @@ const Footer = () => {
 
                 </div>
 
-                <h1 className={styles.title}>© GNETWORKX, 2024</h1>
+                <h1 className={styles.title}>© GNETWORK, 2024</h1>
             </div>
 
             <div className={styles.contact}>

@@ -1,26 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button } from '@mui/material'; // Импортируем компоненты Material UI
 import Workspace from './Workspace/Workspace';
 import HelpPage from './HelpPage';
 import ProfilePage from './ProfilePage';
 import LandingPage from './LandingPage'; // Импортируем компонент лендинг страницы
+import Header from './Header/header';
 
 const App = () => {
   return (
     <Router>
       <div>
         {/* Material UI AppBar */}
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              GNETWORK
-            </Typography>
-            <Button color="inherit" component={Link} to="/">Главная</Button> {/* Link to Home page */}
-            <Button color="inherit" component={Link} to="/help">Документация</Button> {/* Link to Help page */}
-            <Button color="inherit" component={Link} to="/profile">Профиль</Button> {/* Link to Profile page */}
-          </Toolbar>
-        </AppBar>
+        <Header />
 
         {/* Routes */}
         <Routes>

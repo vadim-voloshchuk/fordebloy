@@ -1,3 +1,12 @@
+.landing_page {
+    width: 80%;
+    height: 100%;
+    overflow-y: hidden;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .cont_image {
     display: flex;
     gap: 50px;
@@ -27,4 +36,28 @@
     width: 650px;
     height: 200px;
     padding-bottom: 40px;
+}
+
+@media (max-width: 1024px) {
+    .cont_image {
+        display: block;
+    }
+    .stack_img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .cont_image_big {
+        justify-content: center;
+        align-items: flex-start;
+    }
+    .stack_img_big {
+        width: 200px;
+        height: 100px;
+    }
+    .stack_img_big_vis {
+        width: 350px;
+        height: 100px;
+        padding-bottom: 40px;
+    }
 }

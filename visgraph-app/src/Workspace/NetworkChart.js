@@ -16,6 +16,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import './networkChart.css';
 
 const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpdateNode, onAddNode, onDeleteEdge, onUpdateEdge, onAddEdge }) => {
     const networkRef = useRef(null);
@@ -431,7 +432,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                 </DialogActions>
             </Dialog>
 
-            {hoveredNode && (
+            {!dialogMode && hoveredNode && (
                 <Tooltip
                     title={
                         <Card>
@@ -442,6 +443,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                             </CardContent>
                         </Card>
                     }
+                    className={dialogOpen || dialogMode? 'hide-on-dialog' : ''}
                     sx={{position: 'relative'}}
                     open={Boolean(hoveredNode)}
                     placement="top"

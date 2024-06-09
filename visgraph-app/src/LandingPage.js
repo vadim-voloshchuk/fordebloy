@@ -31,7 +31,7 @@ const LandingPage = () => {
           <p style={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}>О команде</p>
             <section className={styles.section__aboutUs}>
               <div className={styles.about_team}>
-                <div style={{ textAlign: 'left' }}>
+                <div className={styles.tanya}>
                   <img className={styles.team_img} src={tanya} alt='tanya' />
                   <p>
                     <p>Татьяна Прожик Владимировна,</p>
@@ -40,7 +40,7 @@ const LandingPage = () => {
                   </p>
                 </div>
 
-                <div style={{ textAlign: 'center' }}>
+                <div className={styles.bars}>
                   <img className={styles.team_img} src={bovaev} alt='bovaev' />
                   <p>
                     <p>Боваев Арслан Батырович,</p>
@@ -49,7 +49,7 @@ const LandingPage = () => {
                   </p>
                 </div>
 
-                <div style={{ textAlign: 'right' }}>
+                <div className={styles.vadiv}>
                   <img className={styles.team_img} src={vadim} alt='vadim' />
                   <p>
                     <p>Волощук Вадим Игоревич,</p>
