@@ -18,4 +18,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["python", "simple_server.py"]
+CMD ["python", "main_log.py"]
