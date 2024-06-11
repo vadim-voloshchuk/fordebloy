@@ -7,6 +7,10 @@ COPY . /app
 
 RUN npm install
 
+npm install vis-data
+
+ls node_modules/vis-data
+
 RUN npm run build
 
 EXPOSE 3000
