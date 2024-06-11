@@ -1,8 +1,8 @@
 # Используем официальный образ Python в качестве базового
 FROM python:3.9-slim
 
-# Устанавливаем переменную окружения для предотвращения буферизации stdout и stderr
-ENV PYTHONUNBUFFERED=1
+# Install system dependencies
+RUN apt-get update && apt-get install -y build-essential
 
 # Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
