@@ -9,4 +9,4 @@ services:
   frontend:
     build: ./visgraph-app  # Путь к директории с Dockerfile для React
     ports:
-      - "5001:80"
+      - "5001:3000"
