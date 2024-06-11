@@ -1,4 +1,5 @@
-FROM node:14-alpine
+# Stage 1: Build the Node.js application
+FROM node:14-alpine as build
 
 WORKDIR /app
 
@@ -10,9 +11,10 @@ COPY . .
 
 RUN npm run build
 
+# Stage 2: Serve the built application using Nginx
 FROM nginx:alpine
 
-COPY --from=0 /app/build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
 
 EXPOSE 80
 
