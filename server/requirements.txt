@@ -1,5 +1,4 @@
 flask
 flask_cors
-heapq
 networkx
 scikit-learn
