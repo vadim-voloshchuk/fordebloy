@@ -16,10 +16,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем остальное приложение в рабочую директорию
 COPY . .
 
-ENV FLASK_APP=app.py  # замените 'main_log.py' на имя вашего основного файла Flask приложения
-
-# Открываем порт 5000 для доступа к приложению
 EXPOSE 5000
 
-# Команда для запуска приложения
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["python", "simple_server.py"]

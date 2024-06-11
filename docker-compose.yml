@@ -2,18 +2,11 @@ version: '3.8'
 
 services:
   backend:
-    build:
-      context: server/
-      dockerfile: Dockerfile  # Dockerfile для Flask
+    build: ./server
     ports:
       - "5000:5000"
-    environment:
-      FLASK_APP: app.py  # Замените 'app.py' на имя вашего основного файла Flask приложения
-      FLASK_ENV: development  # Вы можете удалить эту строку для продакшн окружения
 
   frontend:
-    build:
-      context: visgraph-app/  # Путь к директории с Dockerfile для React
-      dockerfile: Dockerfile  # Dockerfile для React
+    build: ./visgraph-app  # Путь к директории с Dockerfile для React
     ports:
       - "5001:80"

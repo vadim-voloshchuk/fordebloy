@@ -1,21 +1,14 @@
-# Stage 1: Build the Node.js application
-FROM node:14-alpine as build
+# Use an official Node runtime as a parent image
+FROM node:14
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY . /app
 
 RUN npm install
 
-COPY . .
-
 RUN npm run build
 
-# Stage 2: Serve the built application using Nginx
-FROM nginx:alpine
+EXPOSE 3000
 
-COPY --from=build /app/build /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "start"]
