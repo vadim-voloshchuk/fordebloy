@@ -3,7 +3,7 @@ version: '3.8'
 services:
   backend:
     build:
-      context: .server/
+      context: server/
       dockerfile: Dockerfile  # Dockerfile для Flask
     ports:
       - "5000:5000"
@@ -13,7 +13,7 @@ services:
 
   frontend:
     build:
-      context: .visgraph-app/  # Путь к директории с Dockerfile для React
+      context: visgraph-app/  # Путь к директории с Dockerfile для React
       dockerfile: Dockerfile  # Dockerfile для React
     ports:
       - "5001:80"
