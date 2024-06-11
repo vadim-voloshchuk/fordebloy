@@ -168,7 +168,7 @@ const Workspace = () => {
         const maxDegree = Math.max(...degrees);
 
         try {
-            const response = await axios.post('http://localhost:5000/graph-characteristics', {
+            const response = await axios.post('http://5.182.87.23:5000/graph-characteristics', {
                 nodes,
                 edges
             });
@@ -209,7 +209,7 @@ const Workspace = () => {
 
     const handleClustering = async (method, nClusters) => {
         try {
-            const response = await axios.post('http://localhost:5000/clustering', {
+            const response = await axios.post('http://5.182.87.23:5000/clustering', {
                 nodes,
                 edges,
                 method,
@@ -251,7 +251,7 @@ const Workspace = () => {
 
     const handleOpenDistanceMatrixDialog = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/matrixlog', {
+            const response = await axios.post('http://5.182.87.23:5000/matrixlog', {
                 nodes,
                 edges
             });

@@ -289,7 +289,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
         console.log("Request Data:", JSON.stringify(requestData, null, 2)); // Log request data for debugging
 
         try {
-            const response = await axios.post('http://localhost:5000/shortest-path', requestData);
+            const response = await axios.post('http://5.182.87.23:5000/shortest-path', requestData);
 
             if (response.data.path) {
                 const pathEdges = [];
