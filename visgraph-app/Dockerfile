@@ -7,9 +7,9 @@ COPY . /app
 
 RUN npm install
 
-npm install vis-data
+RUN npm install vis-data
 
-ls node_modules/vis-data
+RUN ls node_modules/vis-data
 
 RUN npm run build
 
