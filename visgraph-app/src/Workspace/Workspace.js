@@ -87,8 +87,8 @@ const Workspace = () => {
     });
 
     useEffect(() => {
-        const n = 20; // Number of nodes
-        const m = 28; // Number of edges
+        const n = 100; // Number of nodes
+        const m = 235; // Number of edges
         const { nodes, edges } = generateRandomGraph(n, m);
         setNodes(nodes);
         setEdges(edges);
