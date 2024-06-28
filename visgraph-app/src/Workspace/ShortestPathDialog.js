@@ -8,7 +8,7 @@ const ShortestPathDialog = ({ open, onClose, onCalculate, nodes, edges }) => {
 
     const handleCalculate = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/shortest-path', {
+            const response = await axios.post('http://185.36.147.31:5000/shortest-path', {
                 startNode,
                 endNode,
                 nodes,

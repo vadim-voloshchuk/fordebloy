@@ -42,7 +42,7 @@ const generateRandomGraph = (n, m) => {
                 title: `Weight: ${getRandomInt(100)}`,
                 weights: `${getRandomInt(1)}`,
                 directed: true,
-                type: `type${getRandomInt(3)}` // Randomly select from type1 to type3
+                type: `type${getRandomInt(3)}`
             });
         }
     }
@@ -87,8 +87,8 @@ const Workspace = () => {
     });
 
     useEffect(() => {
-        const n = 5; // Number of nodes
-        const m = 5; // Number of edges
+        const n = 35; // Number of nodes
+        const m = 45; // Number of edges
         const { nodes, edges } = generateRandomGraph(n, m);
         setNodes(nodes);
         setEdges(edges);
@@ -168,7 +168,7 @@ const Workspace = () => {
         const maxDegree = Math.max(...degrees);
 
         try {
-            const response = await axios.post('http://5.182.87.23:5000/graph-characteristics', {
+            const response = await axios.post('http://185.36.147.31:5000/graph-characteristics', {
                 nodes,
                 edges
             });
@@ -209,7 +209,7 @@ const Workspace = () => {
 
     const handleClustering = async (method, nClusters) => {
         try {
-            const response = await axios.post('http://5.182.87.23:5000/clustering', {
+            const response = await axios.post('http://185.36.147.31:5000/clustering', {
                 nodes,
                 edges,
                 method,
@@ -251,7 +251,7 @@ const Workspace = () => {
 
     const handleOpenDistanceMatrixDialog = async () => {
         try {
-            const response = await axios.post('http://5.182.87.23:5000/matrixlog', {
+            const response = await axios.post('http://185.36.147.31:5000/matrixlog', {
                 nodes,
                 edges
             });
