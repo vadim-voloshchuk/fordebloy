@@ -1,6 +1,5 @@
 import "./header.css";
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import {Link } from 'react-router-dom';
 
 const Header = () => {
   return (

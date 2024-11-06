@@ -27,7 +27,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
     const [currentNode, setCurrentNode] = useState({ id: '', label: '', type: '' });
     const [newEdge, setNewEdge] = useState({ from: '', to: '', weights: '', directed: false, type: '' });
     const [hoveredNode, setHoveredNode] = useState(null);
-    const [nodeDegrees, setNodeDegrees] = useState({});
+    // const [nodeDegrees, setNodeDegrees] = useState({});
     const [nodeCentralities, setNodeCentralities] = useState({});
     const [shortestPath, setShortestPath] = useState([]);
 
@@ -98,10 +98,31 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
 
         network.on("hoverNode", (params) => {
             const nodeId = params.node;
-            const nodePosition = network.getPositions([nodeId])[nodeId];
+            // Получаем позицию узла относительно канваса
+            const nodePosition = network.getPosition(nodeId);
+            
+            // Получаем смещение (если карта перемещена)
+            const viewPosition = network.getViewPosition();
+            
+            // Масштаб карты
+            const scale = network.getScale();
+            
+            // Применяем смещение и масштаб для корректного отображения
+            const adjustedPosition = {
+                x: nodePosition.x + viewPosition.x,
+                y: nodePosition.y + viewPosition.y,
+                scale,
+            };
+
+            console.log('Hovered node position:', adjustedPosition);
+            console.log('Adjusted position:', {
+                x: adjustedPosition.x * adjustedPosition.scale + window.scrollX,
+                y: adjustedPosition.y * adjustedPosition.scale + window.scrollY
+            });
+
             const degree = network.getConnectedEdges(nodeId).length;
             const centrality = nodeCentralities[nodeId] || 'N/A';
-            setHoveredNode({ id: nodeId, degree, centrality, position: nodePosition });
+            setHoveredNode({ id: nodeId, degree, centrality, position: adjustedPosition });
         });
 
         network.on("blurNode", () => {
@@ -158,7 +179,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
         nodes.forEach(node => {
             degrees[node.id] = network.getConnectedEdges(node.id).length;
         });
-        setNodeDegrees(degrees);
+        // setNodeDegrees(degrees);
 
         // Placeholder for centrality calculation
         const centralities = {};
@@ -289,7 +310,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
         console.log("Request Data:", JSON.stringify(requestData, null, 2)); // Log request data for debugging
 
         try {
-            const response = await axios.post('http://185.36.147.31:5000/shortest-path', requestData);
+            const response = await axios.post('http://localhost:5000/shortest-path', requestData);
 
             if (response.data.path) {
                 const pathEdges = [];
@@ -443,20 +464,27 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                             </CardContent>
                         </Card>
                     }
-                    className={dialogOpen || dialogMode? 'hide-on-dialog' : ''}
-                    sx={{position: 'relative'}}
+                    className={dialogOpen || dialogMode ? 'hide-on-dialog' : ''}
+                    // sx={{ position: 'absolute' }}
                     open={Boolean(hoveredNode)}
                     placement="top"
                     disableHoverListener
                 >
-                    <div
-                        style={{
-                            position: 'absolute',
-                            left: hoveredNode.position.x + 800,
-                            top: hoveredNode.position.y + 500,
-                            pointerEvents: 'none'
-                        }}
-                    />
+                     <div
+                    style={{
+                        position: 'absolute',
+                        left: (hoveredNode.position.x * hoveredNode.position.scale + window.scrollX) - 100,  // Сдвиг, чтобы избежать перекрытия
+                        top: (hoveredNode.position.y * hoveredNode.position.scale + window.scrollY) - 70,   // Сдвиг для точности
+                        pointerEvents: 'none',
+                        zIndex: 10,  // Убедитесь, что элемент не перекрывается другими элементами
+                        maxWidth: '300px', // Ограничение ширины Tooltip, чтобы избежать перекрытия
+                        minWidth: '150px', // Минимальная ширина
+                        maxHeight: '200px', // Ограничение по высоте
+                        overflow: 'auto', // Если контент слишком большой, сделать прокрутку
+                    }}
+                />
+
+                    
                 </Tooltip>
             )}
         </div>

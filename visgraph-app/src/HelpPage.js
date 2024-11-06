@@ -1,5 +1,4 @@
 import React from 'react';
-import { Container, Typography, Button } from '@mui/material';
 import styles from './help.module.css';
 import graph_model from './assets/graph_model.png';
 import jsImage from './assets/js.png';

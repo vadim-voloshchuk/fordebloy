@@ -15,20 +15,20 @@ import {
     Typography,
 } from '@mui/material';
 
-// Function to convert JSON string with 'Infinity' values to a proper object
-const parseMatrixString = (matrixString) => {
-    if (!matrixString) {
-        return null;
-    }
-    try {
-        return JSON.parse(matrixString, (key, value) =>
-            value === "Infinity" ? Infinity : value
-        );
-    } catch (error) {
-        console.error("Invalid JSON string:", matrixString);
-        return null;
-    }
-};
+// // Function to convert JSON string with 'Infinity' values to a proper object
+// const parseMatrixString = (matrixString) => {
+//     if (!matrixString) {
+//         return null;
+//     }
+//     try {
+//         return JSON.parse(matrixString, (key, value) =>
+//             value === "Infinity" ? Infinity : value
+//         );
+//     } catch (error) {
+//         console.error("Invalid JSON string:", matrixString);
+//         return null;
+//     }
+// };
 
 const DistanceMatrixDialog = ({ open, onClose, matrixString }) => {
     const matrix = matrixString;

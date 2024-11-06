@@ -1,11 +1,10 @@
 import React from 'react';
 import styles from './landingPage.module.css';
-import land from './assets/landImg.png';
 import tanya from './assets/tanya.png';
 import bovaev from './assets/bovaev.png';
 import vadim from './assets/vadim.png';
 import land2 from './assets/land2.png';
-import { Typography, Button, Grid, Container, Paper } from '@mui/material'; // Импортируем компоненты Material UI
+import {  Button } from '@mui/material'; // Импортируем компоненты Material UI
 import { Link } from 'react-router-dom'; // Импортируем компонент Link для маршрутизации
 import Footer from './Footer/footer';
 
