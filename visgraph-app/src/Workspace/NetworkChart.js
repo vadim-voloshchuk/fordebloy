@@ -98,27 +98,24 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
 
         network.on("hoverNode", (params) => {
             const nodeId = params.node;
+            console.log(params.event)
             // Получаем позицию узла относительно канваса
             const nodePosition = network.getPosition(nodeId);
-            
+            console.log('Node position:', nodePosition);
             // Получаем смещение (если карта перемещена)
             const viewPosition = network.getViewPosition();
-            
+            console.log('View position:', viewPosition);
             // Масштаб карты
             const scale = network.getScale();
             
             // Применяем смещение и масштаб для корректного отображения
             const adjustedPosition = {
-                x: nodePosition.x + viewPosition.x,
-                y: nodePosition.y + viewPosition.y,
+                x: params.event.clientX,
+                y: params.event.clientY,
                 scale,
             };
 
-            console.log('Hovered node position:', adjustedPosition);
-            console.log('Adjusted position:', {
-                x: adjustedPosition.x * adjustedPosition.scale + window.scrollX,
-                y: adjustedPosition.y * adjustedPosition.scale + window.scrollY
-            });
+            
 
             const degree = network.getConnectedEdges(nodeId).length;
             const centrality = nodeCentralities[nodeId] || 'N/A';
@@ -473,13 +470,12 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                      <div
                     style={{
                         position: 'absolute',
-                        left: (hoveredNode.position.x * hoveredNode.position.scale + window.scrollX) - 100,  // Сдвиг, чтобы избежать перекрытия
-                        top: (hoveredNode.position.y * hoveredNode.position.scale + window.scrollY) - 70,   // Сдвиг для точности
+                        left: (hoveredNode.position.x) - 100,  // Сдвиг, чтобы избежать перекрытия
+                        top: (hoveredNode.position.y) - 250,   // Сдвиг для точности
                         pointerEvents: 'none',
                         zIndex: 10,  // Убедитесь, что элемент не перекрывается другими элементами
-                        maxWidth: '300px', // Ограничение ширины Tooltip, чтобы избежать перекрытия
-                        minWidth: '150px', // Минимальная ширина
-                        maxHeight: '200px', // Ограничение по высоте
+                        width: '200px',
+                        height: '200px', // Ограничение по высоте
                         overflow: 'auto', // Если контент слишком большой, сделать прокрутку
                     }}
                 />

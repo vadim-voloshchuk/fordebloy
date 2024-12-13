@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import NodeSearch from './Nodes/NodeSearch';
 import NetworkChart from './NetworkChart';
@@ -217,9 +217,24 @@ const Workspace = () => {
      * Сброс фильтров узлов и рёбер.
      */
     const handleResetFilters = (originalEdges, originalNodes) => {
-        setNodes(originalNodes);
-        setEdges(originalEdges);
+        setGraphCharacteristics({
+            nodeCount: originalNodes.length,
+            edgeCount: originalEdges.length,
+            nodeTypes: new Set(originalNodes.map((node) => node.type)),
+            edgeTypes: new Set(originalEdges.map((edge) => edge.type)),
+          maxDegree: 0,
+            center: 'N/A',
+            radius: 'N/A',
+            diameter: 'N/A',
+            centralities: {}
+        });
     };
+
+    const resetHander=useCallback(()=>{
+        setNodes(filteredNodes);
+        setEdges(filteredEdges);
+        handleResetFilters(filteredNodes, filteredEdges)
+    },[filteredNodes, filteredEdges])
 
     return (
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -238,7 +253,7 @@ const Workspace = () => {
                         onShortestPathClick={() => setShortestPathDialogOpen(true)}
                         onClusteringClick={() => setClusteringDialogOpen(true)}
                         onCalculateMatrix={handleOpenDistanceMatrixDialog}
-                        onResetFilters={handleResetFilters}
+                        onResetFilters={resetHander}
                     />
                     <NetworkChart
                         nodes={nodes}

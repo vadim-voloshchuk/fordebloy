@@ -7,19 +7,14 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
     const [searchType, setSearchType] = useState([]);
     const [searchWeight, setSearchWeight] = useState('');
     const [searchEdgeType, setSearchEdgeType] = useState([]);
-    const [originalNodes, setOriginalNodes] = useState(nodes);
-    const [originalEdges, setOriginalEdges] = useState(edges);
-
+    const [originalEdges, setOriginalEdges] = useState([]);
+    const [originalNodes, setOriginalNodes] = useState([]);
     useEffect(() => {
-        setOriginalNodes(originalNodes);
-        setOriginalEdges(originalEdges);
-    }, [originalNodes, originalEdges]);
-
-    useEffect(() => {
-        onFilterNodes(nodes);
-        onFilterEdges(edges);
-    }, [nodes, edges, onFilterNodes, onFilterEdges]);
-
+        if(originalEdges.length === 0 || originalNodes.length === 0){
+        setOriginalEdges(edges);
+        setOriginalNodes(nodes);}
+        
+    },[edges, nodes]);
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchTerm(value);
@@ -28,9 +23,10 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
 
     const handleTypeChange = (e) => {
         const value = e.target.value;
-        setSearchType(typeof value === 'string' ? value.split(',') : value);
-        filterData(searchTerm, typeof value === 'string' ? value.split(',') : value, searchWeight, searchEdgeType);
-    };
+        setSearchType(value);
+        filterData(searchTerm, value, searchWeight, searchEdgeType);
+      };
+      
 
     const handleWeightChange = (e) => {
         const value = e.target.value;
@@ -45,8 +41,8 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
     };
 
     const filterData = (term, type, weight, edgeType) => {
-        let filteredNodes = nodes;
-        let filteredEdges = edges;
+        let filteredNodes = originalNodes;
+        let filteredEdges = originalEdges;
 
         if (term) {
             filteredNodes = filteredNodes.filter(node => node.label.toLowerCase().includes(term.toLowerCase()));
@@ -70,7 +66,7 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
         setSearchType([]);
         setSearchWeight('');
         setSearchEdgeType([]);
-        onResetFilters(originalEdges, originalNodes); // Use the parent component's reset function
+        onResetFilters(); // Use the parent component's reset function
         console.log("Filters reset to original nodes and edges");
     };
 
@@ -89,9 +85,8 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
                     multiple
                     value={searchType}
                     onChange={handleTypeChange}
-                    renderValue={(selected) => selected.join(', ')}
                 >
-                    {Array.from(new Set(nodes.map(node => node.type))).map((type) => (
+                    {Array.from(new Set(originalNodes.map(node => node.type))).map((type) => (
                         <MenuItem key={type} value={type}>
                             <Checkbox checked={searchType.indexOf(type) > -1} />
                             <ListItemText primary={type} />
@@ -111,9 +106,8 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
                     multiple
                     value={searchEdgeType}
                     onChange={handleEdgeTypeChange}
-                    renderValue={(selected) => selected.join(', ')}
                 >
-                    {Array.from(new Set(edges.map(edge => edge.type))).map((type) => (
+                    {Array.from(new Set(originalEdges.map(edge => edge.type))).map((type) => (
                         <MenuItem key={type} value={type}>
                             <Checkbox checked={searchEdgeType.indexOf(type) > -1} />
                             <ListItemText primary={type} />
