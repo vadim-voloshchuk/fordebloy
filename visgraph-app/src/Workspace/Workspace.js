@@ -61,230 +61,249 @@ const generateRandomGraph = (n, m) => {
 };
 
 const Workspace = () => {
-    // Состояния для хранения данных о графе
+    // Состояния графа
     const [nodes, setNodes] = useState([]);
     const [edges, setEdges] = useState([]);
     const [filteredNodes, setFilteredNodes] = useState([]);
     const [filteredEdges, setFilteredEdges] = useState([]);
-    const [selectedNodeIds, setSelectedNodeIds] = useState([]);
     const [graphCharacteristics, setGraphCharacteristics] = useState({
-        nodeCount: 0,
-        edgeCount: 0,
-        nodeTypes: new Set(),
-        edgeTypes: new Set(),
+      nodeCount: 0,
+      edgeCount: 0,
+      nodeTypes: new Set(),
+      edgeTypes: new Set(),
+      maxDegree: 0,
+      center: 'N/A',
+      radius: 'N/A',
+      diameter: 'N/A',
+      centralities: {}
+    });
+    // Другие состояния, диалоги и мобильный режим
+    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 800);
+    const [shortestPathDialogOpen, setShortestPathDialogOpen] = useState(false);
+    const [clusteringDialogOpen, setClusteringDialogOpen] = useState(false);
+    const [distanceMatrixDialogOpen, setDistanceMatrixDialogOpen] = useState(false);
+    const [distanceMatrix, setDistanceMatrix] = useState(null);
+  
+    // Эффект для отслеживания изменения размера окна
+    useEffect(() => {
+      const handleResize = () => setIsMobileView(window.innerWidth <= 800);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+  
+    // Генерация случайного графа при монтировании компонента
+    useEffect(() => {
+      const n = 35; // Количество узлов
+      const m = 45; // Количество рёбер
+      const { nodes, edges } = generateRandomGraph(n, m);
+      setNodes(nodes);
+      setEdges(edges);
+      setFilteredNodes(nodes);
+      setFilteredEdges(edges);
+      setGraphCharacteristics({
+        nodeCount: nodes.length,
+        edgeCount: edges.length,
+        nodeTypes: new Set(nodes.map((node) => node.type)),
+        edgeTypes: new Set(edges.map((edge) => edge.type)),
         maxDegree: 0,
         center: 'N/A',
         radius: 'N/A',
         diameter: 'N/A',
         centralities: {}
-    });
-    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 800);
-
-    // Диалоговые окна
-    const [shortestPathDialogOpen, setShortestPathDialogOpen] = useState(false);
-    const [clusteringDialogOpen, setClusteringDialogOpen] = useState(false);
-    const [distanceMatrixDialogOpen, setDistanceMatrixDialogOpen] = useState(false);
-    const [distanceMatrix, setDistanceMatrix] = useState(null);
-
-    // Эффект для отслеживания изменения размера окна
-    useEffect(() => {
-        const handleResize = () => setIsMobileView(window.innerWidth <= 800);
-        window.addEventListener('resize', handleResize);
-
-        return () => window.removeEventListener('resize', handleResize);
+      });
     }, []);
-
-    // Эффект для генерации случайного графа при монтировании компонента
+  
+    // Пересчёт характеристик графа
     useEffect(() => {
-        const n = 35; // Количество узлов
-        const m = 45; // Количество рёбер
-        const { nodes, edges } = generateRandomGraph(n, m);
-        setNodes(nodes);
-        setEdges(edges);
-        setFilteredNodes(nodes);
-        setFilteredEdges(edges);
-
-        // Установка характеристик графа
-        setGraphCharacteristics({
-            nodeCount: nodes.length,
-            edgeCount: edges.length,
-            nodeTypes: new Set(nodes.map((node) => node.type)),
-            edgeTypes: new Set(edges.map((edge) => edge.type)),
-            maxDegree: 0,
-            center: 'N/A',
-            radius: 'N/A',
-            diameter: 'N/A',
-            centralities: {}
-        });
-    }, []);
-
-    // Эффект для пересчёта характеристик графа при изменении узлов или рёбер
-    useEffect(() => {
-        calculateGraphCharacteristics();
+      calculateGraphCharacteristics();
     }, [nodes, edges]);
-
-    /**
-     * Расчёт характеристик графа, таких как степень, центральность и т. д.
-     */
+  
     const calculateGraphCharacteristics = async () => {
-        const degrees = nodes.map((node) =>
-            edges.filter((edge) => edge.from === node.id || edge.to === node.id).length
-        );
-        const maxDegree = Math.max(...degrees);
-
-        try {
-            const response = await axios.post('http://localhost:5000/graph-characteristics', {
-                nodes,
-                edges,
-            });
-            setGraphCharacteristics({
-                nodeCount: nodes.length,
-                edgeCount: edges.length,
-                nodeTypes: new Set(nodes.map((node) => node.type)),
-                edgeTypes: new Set(edges.map((edge) => edge.type)),
-                maxDegree,
-                center: response.data.center.join(','),
-                radius: response.data.radius,
-                diameter: response.data.diameter,
-                centralities: response.data.centralities,
-            });
-            setDistanceMatrix(response.data.distances);  // Сохраняем матрицу расстояний
-        } catch (error) {
-            console.error('Ошибка при расчёте характеристик графа', error);
-        }
-    };
-
-    /**
-     * Обработчик клика по узлу.
-     * @param {Array} nodeIds - Массив выбранных узлов.
-     */
-    const handleNodeClick = (nodeIds) => setSelectedNodeIds(nodeIds);
-
-    // Функции для добавления, обновления и удаления узлов и рёбер
-    const handleAddNode = (node) => {
-        setNodes((prevNodes) => [...prevNodes, node]);
-        setFilteredNodes((prevNodes) => [...prevNodes, node]);
-    };
-
-    const handleUpdateNode = (updatedNode) => {
-        setNodes((prevNodes) =>
-            prevNodes.map((node) => (node.id === updatedNode.id ? updatedNode : node))
-        );
-        setFilteredNodes((prevNodes) =>
-            prevNodes.map((node) => (node.id === updatedNode.id ? updatedNode : node))
-        );
-    };
-
-    const handleDeleteNode = (nodeId) => {
-        setNodes((prevNodes) => prevNodes.filter((node) => node.id !== nodeId));
-        setFilteredNodes((prevNodes) => prevNodes.filter((node) => node.id !== nodeId));
-    };
-
-    const handleAddEdge = (edge) => {
-        setEdges((prevEdges) => [...prevEdges, edge]);
-        setFilteredEdges((prevEdges) => [...prevEdges, edge]);
-    };
-
-    const handleUpdateEdge = (updatedEdge) => {
-        setEdges((prevEdges) =>
-            prevEdges.map((edge) => (edge.id === updatedEdge.id ? updatedEdge : edge))
-        );
-        setFilteredEdges((prevEdges) =>
-            prevEdges.map((edge) => (edge.id === updatedEdge.id ? updatedEdge : edge))
-        );
-    };
-
-    const handleDeleteEdge = (edgeId) => {
-        setEdges((prevEdges) => prevEdges.filter((edge) => edge.id !== edgeId));
-        setFilteredEdges((prevEdges) => prevEdges.filter((edge) => edge.id !== edgeId));
-    };
-
-    // Открытие диалога матрицы расстояний
-    const handleOpenDistanceMatrixDialog = async () => {
-        try {
-            const response = await axios.post('http://localhost:5000/matrixlog', {
-                nodes,
-                edges,
-            });
-            setDistanceMatrix(response.data);
-            setDistanceMatrixDialogOpen(true);
-        } catch (error) {
-            console.error('Ошибка при загрузке матрицы расстояний', error);
-        }
-    };
-
-    /**
-     * Сброс фильтров узлов и рёбер.
-     */
-    const handleResetFilters = (originalEdges, originalNodes) => {
-        setGraphCharacteristics({
-            nodeCount: originalNodes.length,
-            edgeCount: originalEdges.length,
-            nodeTypes: new Set(originalNodes.map((node) => node.type)),
-            edgeTypes: new Set(originalEdges.map((edge) => edge.type)),
-          maxDegree: 0,
-            center: 'N/A',
-            radius: 'N/A',
-            diameter: 'N/A',
-            centralities: {}
+      const degrees = nodes.map((node) =>
+        edges.filter((edge) => edge.from === node.id || edge.to === node.id).length
+      );
+      const maxDegree = Math.max(...degrees);
+      try {
+        const response = await axios.post('http://localhost:5000/graph-characteristics', {
+          nodes,
+          edges,
         });
+        setGraphCharacteristics({
+          nodeCount: nodes.length,
+          edgeCount: edges.length,
+          nodeTypes: new Set(nodes.map((node) => node.type)),
+          edgeTypes: new Set(edges.map((edge) => edge.type)),
+          maxDegree,
+          center: response.data.center.join(','),
+          radius: response.data.radius,
+          diameter: response.data.diameter,
+          centralities: response.data.centralities,
+        });
+        setDistanceMatrix(response.data.distances);
+      } catch (error) {
+        console.error('Ошибка при расчёте характеристик графа', error);
+      }
     };
-
-    const resetHander=useCallback(()=>{
-        setNodes(filteredNodes);
-        setEdges(filteredEdges);
-        handleResetFilters(filteredNodes, filteredEdges)
-    },[filteredNodes, filteredEdges])
-
+  
+    // CRUD операции для узлов и рёбер (создание, обновление, удаление)
+    const handleAddNode = (node) => {
+      setNodes((prevNodes) => [...prevNodes, node]);
+      setFilteredNodes((prevNodes) => [...prevNodes, node]);
+    };
+  
+    const handleUpdateNode = (updatedNode) => {
+      setNodes((prevNodes) =>
+        prevNodes.map((node) => (node.id === updatedNode.id ? updatedNode : node))
+      );
+      setFilteredNodes((prevNodes) =>
+        prevNodes.map((node) => (node.id === updatedNode.id ? updatedNode : node))
+      );
+    };
+  
+    const handleDeleteNode = (nodeId) => {
+      setNodes((prevNodes) => prevNodes.filter((node) => node.id !== nodeId));
+      setFilteredNodes((prevNodes) => prevNodes.filter((node) => node.id !== nodeId));
+    };
+  
+    const handleAddEdge = (edge) => {
+      setEdges((prevEdges) => [...prevEdges, edge]);
+      setFilteredEdges((prevEdges) => [...prevEdges, edge]);
+    };
+  
+    const handleUpdateEdge = (updatedEdge) => {
+      setEdges((prevEdges) =>
+        prevEdges.map((edge) => (edge.id === updatedEdge.id ? updatedEdge : edge))
+      );
+      setFilteredEdges((prevEdges) =>
+        prevEdges.map((edge) => (edge.id === updatedEdge.id ? updatedEdge : edge))
+      );
+    };
+  
+    const handleDeleteEdge = (edgeId) => {
+      setEdges((prevEdges) => prevEdges.filter((edge) => edge.id !== edgeId));
+      setFilteredEdges((prevEdges) => prevEdges.filter((edge) => edge.id !== edgeId));
+    };
+  
+    // Сохранение графа в JSON-файл
+    const handleSaveGraph = () => {
+      const graphData = { nodes, edges };
+      const json = JSON.stringify(graphData, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'graph.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+  
+    // Загрузка графа из JSON-файла
+    const handleLoadGraph = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const graphData = JSON.parse(e.target.result);
+          if (graphData.nodes && graphData.edges) {
+            setNodes(graphData.nodes);
+            setEdges(graphData.edges);
+            setFilteredNodes(graphData.nodes);
+            setFilteredEdges(graphData.edges);
+            // Пересчитываем характеристики графа после загрузки
+            calculateGraphCharacteristics();
+          } else {
+            console.error('Неверный формат файла');
+          }
+        } catch (error) {
+          console.error('Ошибка чтения файла', error);
+        }
+      };
+      reader.readAsText(file);
+    };
+  
+    // Сброс фильтров (пример)
+    const handleResetFilters = (originalEdges, originalNodes) => {
+      setGraphCharacteristics({
+        nodeCount: originalNodes.length,
+        edgeCount: originalEdges.length,
+        nodeTypes: new Set(originalNodes.map((node) => node.type)),
+        edgeTypes: new Set(originalEdges.map((edge) => edge.type)),
+        maxDegree: 0,
+        center: 'N/A',
+        radius: 'N/A',
+        diameter: 'N/A',
+        centralities: {}
+      });
+    };
+  
+    const resetHandler = useCallback(() => {
+      setNodes(filteredNodes);
+      setEdges(filteredEdges);
+      handleResetFilters(filteredNodes, filteredEdges);
+    }, [filteredNodes, filteredEdges]);
+  
     return (
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-            {isMobileView ? (
-                <div style={{ textAlign: 'center', marginTop: '20%', fontSize: '24px' }}>
-                    Пожалуйста воспользуйтесь версией для ПК :)
-                </div>
-            ) : (
-                <>
-                    <GraphInfoPanel {...graphCharacteristics} />
-                    <NodeSearch
-                        nodes={nodes}
-                        edges={edges}
-                        onFilterNodes={setNodes}
-                        onFilterEdges={setEdges}
-                        onShortestPathClick={() => setShortestPathDialogOpen(true)}
-                        onClusteringClick={() => setClusteringDialogOpen(true)}
-                        onCalculateMatrix={handleOpenDistanceMatrixDialog}
-                        onResetFilters={resetHander}
-                    />
-                    <NetworkChart
-                        nodes={nodes}
-                        edges={edges}
-                        onNodeClick={handleNodeClick}
-                        onDeleteNode={handleDeleteNode}
-                        onUpdateNode={handleUpdateNode}
-                        onDeleteEdge={handleDeleteEdge}
-                        onUpdateEdge={handleUpdateEdge}
-                        onAddNode={handleAddNode}
-                        onAddEdge={handleAddEdge}
-                    />
-                    <ShortestPathDialog
-                        open={shortestPathDialogOpen}
-                        onClose={() => setShortestPathDialogOpen(false)}
-                        onCalculate={() => {}}
-                    />
-                    <ClusteringDialog
-                        open={clusteringDialogOpen}
-                        onClose={() => setClusteringDialogOpen(false)}
-                        onCluster={() => {}}
-                    />
-                    <DistanceMatrixDialog
-                        open={distanceMatrixDialogOpen}
-                        onClose={() => setDistanceMatrixDialogOpen(false)}
-                        matrixString={distanceMatrix}
-                    />
-                </>
-            )}
-        </div>
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        {isMobileView ? (
+          <div style={{ textAlign: 'center', marginTop: '20%', fontSize: '24px' }}>
+            Пожалуйста, воспользуйтесь версией для ПК :)
+          </div>
+        ) : (
+          <>
+            <GraphInfoPanel {...graphCharacteristics} />
+            <NodeSearch
+              nodes={nodes}
+              edges={edges}
+              onFilterNodes={setNodes}
+              onFilterEdges={setEdges}
+              onShortestPathClick={() => setShortestPathDialogOpen(true)}
+              onClusteringClick={() => setClusteringDialogOpen(true)}
+              onCalculateMatrix={() => {}}
+              onResetFilters={resetHandler}
+            />
+            {/* Кнопки для сохранения и загрузки графа */}
+            <div style={{ margin: '10px' }}>
+              <button onClick={handleSaveGraph}>Сохранить граф</button>
+              <input
+                type="file"
+                accept="application/json"
+                onChange={handleLoadGraph}
+                style={{ marginLeft: '10px' }}
+              />
+            </div>
+            <NetworkChart
+              nodes={nodes}
+              edges={edges}
+              onNodeClick={() => {}}
+              onDeleteNode={handleDeleteNode}
+              onUpdateNode={handleUpdateNode}
+              onDeleteEdge={handleDeleteEdge}
+              onUpdateEdge={handleUpdateEdge}
+              onAddNode={handleAddNode}
+              onAddEdge={handleAddEdge}
+            />
+            <ShortestPathDialog
+              open={shortestPathDialogOpen}
+              onClose={() => setShortestPathDialogOpen(false)}
+              onCalculate={() => {}}
+            />
+            <ClusteringDialog
+              open={clusteringDialogOpen}
+              onClose={() => setClusteringDialogOpen(false)}
+              onCluster={() => {}}
+            />
+            <DistanceMatrixDialog
+              open={distanceMatrixDialogOpen}
+              onClose={() => setDistanceMatrixDialogOpen(false)}
+              matrixString={distanceMatrix}
+            />
+          </>
+        )}
+      </div>
     );
-};
-
-export default Workspace;
+  };
+  
+  export default Workspace;
