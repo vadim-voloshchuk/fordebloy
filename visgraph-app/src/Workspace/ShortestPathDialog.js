@@ -9,11 +9,12 @@ const ShortestPathDialog = ({ open, onClose, onCalculate, nodes, edges }) => {
     const handleCalculate = async () => {
         try {
             const response = await axios.post('http://localhost:5000/shortest-path', {
-                startNode,
-                endNode,
+                start_node: startNode, 
+                end_node: endNode,
                 nodes,
                 edges
             });
+            
             onCalculate(response.data);
         } catch (error) {
             console.error('Error calculating shortest path', error);

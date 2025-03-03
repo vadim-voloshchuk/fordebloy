@@ -83,6 +83,7 @@ const Workspace = () => {
     const [clusteringDialogOpen, setClusteringDialogOpen] = useState(false);
     const [distanceMatrixDialogOpen, setDistanceMatrixDialogOpen] = useState(false);
     const [distanceMatrix, setDistanceMatrix] = useState(null);
+    const [shortestPath, setShortestPath] = useState([]);
   
     // Эффект для отслеживания изменения размера окна
     useEffect(() => {
@@ -93,8 +94,8 @@ const Workspace = () => {
   
     // Генерация случайного графа при монтировании компонента
     useEffect(() => {
-      const n = 35; // Количество узлов
-      const m = 45; // Количество рёбер
+      const n = 25; // Количество узлов
+      const m = 25; // Количество рёбер
       const { nodes, edges } = generateRandomGraph(n, m);
       setNodes(nodes);
       setEdges(edges);
@@ -144,6 +145,26 @@ const Workspace = () => {
         console.error('Ошибка при расчёте характеристик графа', error);
       }
     };
+
+      // Когда диалог открывается, грузим матрицу
+  useEffect(() => {
+    if (distanceMatrixDialogOpen) {
+      loadDistanceMatrix();
+    }
+  }, [distanceMatrixDialogOpen]);
+
+  const loadDistanceMatrix = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/matrixlog', {
+        nodes,
+        edges
+      });
+      setDistanceMatrix(response.data);
+    } catch (error) {
+      console.error("Ошибка при запросе матрицы расстояний:", error);
+      setDistanceMatrix(null);
+    }
+  };
   
     // CRUD операции для узлов и рёбер (создание, обновление, удаление)
     const handleAddNode = (node) => {
@@ -261,7 +282,8 @@ const Workspace = () => {
               onFilterEdges={setEdges}
               onShortestPathClick={() => setShortestPathDialogOpen(true)}
               onClusteringClick={() => setClusteringDialogOpen(true)}
-              onCalculateMatrix={() => {}}
+              onCalculateMatrix={() => setDistanceMatrixDialogOpen(true)}
+
               onResetFilters={resetHandler}
             />
             {/* Кнопки для сохранения и загрузки графа */}
@@ -278,6 +300,7 @@ const Workspace = () => {
               nodes={nodes}
               edges={edges}
               onNodeClick={() => {}}
+              shortestPath={shortestPath}
               onDeleteNode={handleDeleteNode}
               onUpdateNode={handleUpdateNode}
               onDeleteEdge={handleDeleteEdge}
@@ -288,7 +311,22 @@ const Workspace = () => {
             <ShortestPathDialog
               open={shortestPathDialogOpen}
               onClose={() => setShortestPathDialogOpen(false)}
-              onCalculate={() => {}}
+              onCalculate={(data) => {
+                console.log("Пришёл ответ от сервера:", data);
+                if (data.path) {
+                  // data.path допустим [1, 4, 2]
+                  const result = [];
+                  for (let i = 0; i < data.path.length - 1; i++) {
+                    result.push({ from: data.path[i], to: data.path[i + 1] });
+                  }
+                  setShortestPath(result);  // <-- теперь это [{from:1, to:4}, {from:4, to:2}]
+                } else {
+                  setShortestPath([]);
+                }
+              }}
+              
+              nodes={nodes}
+              edges={edges}
             />
             <ClusteringDialog
               open={clusteringDialogOpen}

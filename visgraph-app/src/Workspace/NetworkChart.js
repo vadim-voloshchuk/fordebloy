@@ -18,7 +18,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import './networkChart.css';
 
-const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpdateNode, onAddNode, onDeleteEdge, onUpdateEdge, onAddEdge }) => {
+const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, shortestPath, onUpdateNode, onAddNode, onDeleteEdge, onUpdateEdge, onAddEdge }) => {
     const networkRef = useRef(null);
     const [selectedNodes, setSelectedNodes] = useState([]);
     const [contextMenu, setContextMenu] = useState({ mouseX: null, mouseY: null, item: null });
@@ -29,7 +29,6 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
     const [hoveredNode, setHoveredNode] = useState(null);
     // const [nodeDegrees, setNodeDegrees] = useState({});
     const [nodeCentralities, setNodeCentralities] = useState({});
-    const [shortestPath, setShortestPath] = useState([]);
 
     useEffect(() => {
         const data = {
@@ -154,8 +153,8 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                 ctx.fillText(`tp${node.type.replace(/\D/g, '')}`, nodePosition.x, nodePosition.y + 20);
             });
 
-            // Highlight shortest path nodes and edges
-            if (shortestPath.length > 0) {
+              // Highlight shortest path nodes and edges
+              if (shortestPath.length > 0) {
                 ctx.strokeStyle = 'red';
                 ctx.lineWidth = 2;
                 shortestPath.forEach((edge) => {
@@ -165,9 +164,27 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                     ctx.moveTo(fromPosition.x, fromPosition.y);
                     ctx.lineTo(toPosition.x, toPosition.y);
                     ctx.stroke();
-                });
+                });}
+
+             // Рисуем кратчайший путь
+        if (shortestPath.length > 0) {
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            shortestPath.forEach((edge) => {
+            const fromPos = network.getPositions([edge.from])[edge.from];
+            const toPos = network.getPositions([edge.to])[edge.to];
+            if (fromPos && toPos) {
+                ctx.beginPath();
+                ctx.moveTo(fromPos.x, fromPos.y);
+                ctx.lineTo(toPos.x, toPos.y);
+                ctx.stroke();
             }
         });
+        }
+
+          
+        });
+
 
         document.addEventListener('click', () => setContextMenu({ mouseX: null, mouseY: null, item: null }));
 
@@ -284,51 +301,6 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
         }
         setDialogOpen(false);
         setSelectedNodes([]); // Clear the selected nodes
-    };
-
-    const handleCalculateShortestPath = async (startNode, endNode) => {
-        if (!startNode || !endNode) {
-            console.error("Start node and end node must be defined");
-            return;
-        }
-
-        const requestData = {
-            nodes: nodes.map(node => ({ id: node.id })),
-            edges: edges.map(edge => ({
-                from: edge.from,
-                to: edge.to,
-                weight: Math.min(...edge.weights.split(',').map(Number)),  // Use the smallest weight for shortest path calculation
-                directed: edge.directed || false
-            })),
-            start_node: startNode,  // Use snake_case keys as expected by the backend
-            end_node: endNode       // Use snake_case keys as expected by the backend
-        };
-
-        console.log("Request Data:", JSON.stringify(requestData, null, 2)); // Log request data for debugging
-
-        try {
-            const response = await axios.post('http://localhost:5000/shortest-path', requestData);
-
-            if (response.data.path) {
-                const pathEdges = [];
-                for (let i = 0; i < response.data.path.length - 1; i++) {
-                    pathEdges.push({ from: response.data.path[i], to: response.data.path[i + 1] });
-                }
-                setShortestPath(pathEdges);
-            } else {
-                console.error('No path found');
-            }
-        } catch (error) {
-            console.error('Error calculating shortest path', error.response ? error.response.data : error.message);
-        }
-    };
-
-    const handleFindShortestPath = () => {
-        if (selectedNodes.length === 2) {
-            handleCalculateShortestPath(selectedNodes[0], selectedNodes[1]);
-        } else {
-            console.error("Please select exactly two nodes to find the shortest path");
-        }
     };
 
     return (
