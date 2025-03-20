@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormControl, Checkbox, ListItemText } from '@mui/material';
 import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormControl, Checkbox, ListItemText, Grid } from '@mui/material';
 
 const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPathClick, onClusteringClick, onCalculateMatrix, onResetFilters }) => {
@@ -7,14 +6,15 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
     const [searchType, setSearchType] = useState([]);
     const [searchWeight, setSearchWeight] = useState('');
     const [searchEdgeType, setSearchEdgeType] = useState([]);
-    const [originalEdges, setOriginalEdges] = useState([]);
-    const [originalNodes, setOriginalNodes] = useState([]);
+    const [availableNodeTypes, setAvailableNodeTypes] = useState([]);
+    const [availableEdgeTypes, setAvailableEdgeTypes] = useState([]);
+
+    // Обновление доступных типов при изменении графа
     useEffect(() => {
-        if(originalEdges.length === 0 || originalNodes.length === 0){
-        setOriginalEdges(edges);
-        setOriginalNodes(nodes);}
-        
-    },[edges, nodes]);
+        setAvailableNodeTypes([...new Set(nodes.map(node => node.type))]);
+        setAvailableEdgeTypes([...new Set(edges.map(edge => edge.type))]);
+    }, [nodes, edges]);
+
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchTerm(value);
@@ -25,8 +25,7 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
         const value = e.target.value;
         setSearchType(value);
         filterData(searchTerm, value, searchWeight, searchEdgeType);
-      };
-      
+    };
 
     const handleWeightChange = (e) => {
         const value = e.target.value;
@@ -41,20 +40,28 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
     };
 
     const filterData = (term, type, weight, edgeType) => {
-        let filteredNodes = originalNodes;
-        let filteredEdges = originalEdges;
+        let filteredNodes = nodes;
+        let filteredEdges = edges;
 
         if (term) {
-            filteredNodes = filteredNodes.filter(node => node.label.toLowerCase().includes(term.toLowerCase()));
+            filteredNodes = filteredNodes.filter(node => 
+                node.label.toLowerCase().includes(term.toLowerCase())
+            );
         }
         if (type.length > 0) {
-            filteredNodes = filteredNodes.filter(node => type.includes(node.type));
+            filteredNodes = filteredNodes.filter(node => 
+                type.includes(node.type)
+            );
         }
         if (weight) {
-            filteredEdges = filteredEdges.filter(edge => edge.weights.split(',').some(w => w.includes(weight)));
+            filteredEdges = filteredEdges.filter(edge => 
+                edge.weights.split(',').some(w => w.includes(weight))
+            );
         }
         if (edgeType.length > 0) {
-            filteredEdges = filteredEdges.filter(edge => edgeType.includes(edge.type));
+            filteredEdges = filteredEdges.filter(edge => 
+                edgeType.includes(edge.type)
+            );
         }
 
         onFilterNodes(filteredNodes);
@@ -66,19 +73,18 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
         setSearchType([]);
         setSearchWeight('');
         setSearchEdgeType([]);
-        onResetFilters(); // Use the parent component's reset function
-        console.log("Filters reset to original nodes and edges");
+        onResetFilters();
     };
 
     return (
         <Box display="flex" flexDirection="row" alignItems="center" gap={2} sx={{ p: 2, border: '1px dashed grey' }}>
-
             <TextField
                 label="Фильтрация по имени вершины"
                 variant="outlined"
                 value={searchTerm}
                 onChange={handleSearchChange}
             />
+            
             <FormControl variant="outlined" sx={{ minWidth: 200 }}>
                 <InputLabel>Поиск по типу вершины</InputLabel>
                 <Select
@@ -86,20 +92,22 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
                     value={searchType}
                     onChange={handleTypeChange}
                 >
-                    {Array.from(new Set(originalNodes.map(node => node.type))).map((type) => (
+                    {availableNodeTypes.map((type) => (
                         <MenuItem key={type} value={type}>
-                            <Checkbox checked={searchType.indexOf(type) > -1} />
+                            <Checkbox checked={searchType.includes(type)} />
                             <ListItemText primary={type} />
                         </MenuItem>
                     ))}
                 </Select>
             </FormControl>
+
             <TextField
                 label="Фильтрация по весу"
                 variant="outlined"
                 value={searchWeight}
                 onChange={handleWeightChange}
             />
+            
             <FormControl variant="outlined" sx={{ minWidth: 200 }}>
                 <InputLabel>Поиск по типу связи</InputLabel>
                 <Select
@@ -107,19 +115,21 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
                     value={searchEdgeType}
                     onChange={handleEdgeTypeChange}
                 >
-                    {Array.from(new Set(originalEdges.map(edge => edge.type))).map((type) => (
+                    {availableEdgeTypes.map((type) => (
                         <MenuItem key={type} value={type}>
-                            <Checkbox checked={searchEdgeType.indexOf(type) > -1} />
+                            <Checkbox checked={searchEdgeType.includes(type)} />
                             <ListItemText primary={type} />
                         </MenuItem>
                     ))}
                 </Select>
             </FormControl>
+
+            {/* Кнопки и остальные элементы остаются без изменений */}
             <Button variant="contained" color="primary" onClick={onShortestPathClick}>
                 Кратчайший путь
             </Button>
             <Button variant="contained" color="primary" onClick={onClusteringClick}>
-                Кластерзиация
+                Кластеризация
             </Button>
             <Button variant="contained" color="primary" onClick={onCalculateMatrix}>
                 Матрица расстояний
