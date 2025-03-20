@@ -133,18 +133,27 @@ const Workspace = () => {
         }
     };
 
+    // Удаляем старую функцию loadDistanceMatrix и заменяем её на:
     const loadDistanceMatrix = async () => {
-        try {
-            const response = await axios.post('http://localhost:5000/matrixlog', {
-                nodes,
-                edges
-            });
-            setDistanceMatrix(response.data);
-        } catch (error) {
-            console.error("Ошибка при запросе матрицы расстояний:", error);
-            setDistanceMatrix(null);
-        }
+      try {
+        const response = await axios.post('http://localhost:5000/matrixlog', {
+          nodes,
+          edges
+        });
+        setDistanceMatrix(response.data); // Сохраняем данные в состояние
+      } catch (error) {
+        console.error("Ошибка при запросе матрицы расстояний:", error);
+        setDistanceMatrix(null);
+      }
     };
+
+    // Добавляем эффект для загрузки матрицы при открытии диалога
+    useEffect(() => {
+      if (distanceMatrixDialogOpen) {
+        loadDistanceMatrix();
+      }
+    }, [distanceMatrixDialogOpen]);
+
 
     const handleAddNode = (node) => {
         setNodes((prevNodes) => [...prevNodes, node]);
@@ -302,9 +311,9 @@ const Workspace = () => {
                         onCluster={() => {}}
                     />
                     <DistanceMatrixDialog
-                        open={distanceMatrixDialogOpen}
-                        onClose={() => setDistanceMatrixDialogOpen(false)}
-                        matrixString={distanceMatrix}
+                    open={distanceMatrixDialogOpen}
+                    onClose={() => setDistanceMatrixDialogOpen(false)}
+                    matrix={distanceMatrix}
                     />
                 </>
             )}
