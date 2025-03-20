@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { DataSet } from 'vis-data';
 import { Network } from 'vis-network';
-import axios from 'axios';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
@@ -207,7 +206,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, short
                 network.destroy();
             }
         };
-    }, [nodes, edges, shortestPath]);
+    }, [nodes, edges, shortestPath, ]);
 
     useEffect(() => {
         if (selectedNodes.length === 2) {
@@ -277,31 +276,34 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, short
     };
 
     const handleDialogClose = () => {
-        setDialogOpen(false);
-        setSelectedNodes([]); // Clear the selected nodes
-    };
-
-    const handleDialogSave = () => {
-        if (dialogMode === 'create') {
-            const newNode = { ...currentNode, id: nodes.length + 1 };
-            onAddNode(newNode);
-        } else if (dialogMode === 'update') {
-            onUpdateNode(currentNode);
-        } else if (dialogMode === 'updateEdge') {
-            onUpdateEdge(newEdge);
-        } else if (dialogMode === '') {
-            const edge = {
-                ...newEdge,
-                id: edges.length + 1,
-                arrows: newEdge.directed ? 'to' : '',
-                label: newEdge.type ? `ge${edges.length + 1}/tp${newEdge.type.replace(/\D/g, '')}` : `ge${edges.length + 1}`,
-                title: `Weights: ${newEdge.weights}`
-            };
-            onAddEdge(edge);
-        }
-        setDialogOpen(false);
-        setSelectedNodes([]); // Clear the selected nodes
-    };
+      setDialogOpen(false);
+      setDialogMode(''); // Сброс состояния dialogMode
+      setSelectedNodes([]); // Очистка выбранных узлов
+  };
+  
+  const handleDialogSave = () => {
+      if (dialogMode === 'create') {
+          const newNode = { ...currentNode, id: nodes.length + 1 };
+          onAddNode(newNode);
+      } else if (dialogMode === 'update') {
+          onUpdateNode(currentNode);
+      } else if (dialogMode === 'updateEdge') {
+          onUpdateEdge(newEdge);
+      } else { // Если dialogMode пустое, создаем связь
+          const edge = {
+              ...newEdge,
+              id: edges.length + 1,
+              arrows: newEdge.directed ? 'to' : '',
+              label: newEdge.type ? `ge${edges.length + 1}/tp${newEdge.type.replace(/\D/g, '')}` : `ge${edges.length + 1}`,
+              title: `Weights: ${newEdge.weights}`
+          };
+          onAddEdge(edge);
+      }
+      setDialogOpen(false);
+      setDialogMode(''); // Сброс состояния dialogMode
+      setSelectedNodes([]); // Очистка выбранных узлов
+  };
+  
 
     return (
         <div style={{ position: "relative" }}>

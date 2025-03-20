@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import NodeSearch from './Nodes/NodeSearch';
 import NetworkChart from './NetworkChart';
@@ -113,6 +113,7 @@ const Workspace = () => {
         centralities: {}
       });
     }, []);
+    const graphRef = useRef(null);
   
     // Пересчёт характеристик графа
     useEffect(() => {
@@ -297,6 +298,7 @@ const Workspace = () => {
               />
             </div>
             <NetworkChart
+              ref={graphRef}
               nodes={nodes}
               edges={edges}
               onNodeClick={() => {}}
