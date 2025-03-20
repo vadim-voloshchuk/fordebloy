@@ -230,10 +230,14 @@ const Workspace = () => {
         try {
           const graphData = JSON.parse(e.target.result);
           if (graphData.nodes && graphData.edges) {
+            // Сначала загружаем данные в основное состояние
             setNodes(graphData.nodes);
             setEdges(graphData.edges);
+    
+            // Синхронизируем отфильтрованные данные с загруженными
             setFilteredNodes(graphData.nodes);
             setFilteredEdges(graphData.edges);
+    
             // Пересчитываем характеристики графа после загрузки
             calculateGraphCharacteristics();
           } else {
@@ -245,9 +249,12 @@ const Workspace = () => {
       };
       reader.readAsText(file);
     };
+    
   
     // Сброс фильтров (пример)
-    const handleResetFilters = (originalEdges, originalNodes) => {
+    const handleResetFilters = (originalNodes, originalEdges) => {
+      setFilteredNodes(originalNodes);  // Применяйте фильтрацию к загруженным данным
+      setFilteredEdges(originalEdges);  // Тоже для рёбер
       setGraphCharacteristics({
         nodeCount: originalNodes.length,
         edgeCount: originalEdges.length,
@@ -260,6 +267,7 @@ const Workspace = () => {
         centralities: {}
       });
     };
+    
   
     const resetHandler = useCallback(() => {
       setNodes(filteredNodes);
