@@ -2,11 +2,11 @@ version: '3.8'
 
 services:
   backend:
-    build: ./server
+    build: ./backend
     ports:
       - "5000:5000"
 
   frontend:
-    build: ./visgraph-app  # Путь к директории с Dockerfile для React
+    build: ./frontend  # Путь к директории с Dockerfile для React
     ports:
       - "5001:3000"
