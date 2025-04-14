@@ -1,0 +1,163 @@
+.landing_page {
+    height: 100%;
+    overflow-x: hidden;
+    padding: 20px 10px;
+    box-sizing: border-box;
+}
+
+.section__train {
+    margin: 20px auto;
+    padding: 10px 20px;
+    max-width: 1200px;
+}
+
+.img__land {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.first_section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.section__aboutUs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    border: 2px solid black;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: 30px auto;
+    gap: 20px;
+    text-align: center;
+}
+
+.third_section {
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.team_img {
+    border-radius: 50%;
+    width: 162px;
+    height: 162px;
+    object-fit: cover;
+}
+
+.about_team {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+}
+
+.aboutUs__Info {
+    padding: 30px;
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.text_p {
+    font-size: 18px;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.tanya,
+.bars,
+.vadiv {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .first_section {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .team_img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .text_p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .team_img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .text_p {
+        font-size: 15px;
+    }
+
+    .third_section {
+        max-width: 100%;
+        padding: 0 10px;
+    }
+}
+
+
+.graph_background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: radial-gradient(circle at 30% 30%, rgba(25, 118, 210, 0.05), transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(25, 118, 210, 0.03), transparent 50%);
+    background-size: cover;
+    animation: fadeFlow 12s ease-in-out infinite;
+}
+
+@keyframes fadeFlow {
+    0%, 100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.2;
+    }
+}
+
+
+.graph_circle_container {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    position: relative;
+}
