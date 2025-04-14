@@ -149,7 +149,7 @@ edges = edges.map((edge, index) => {
 
 ## 🚀 Roadmap
 
-Следите за развитием проекта и нашими будущими планами: [Roadmap](https://link_to_roadmap.com)
+Следите за развитием проекта и нашими будущими планами: [Roadmap](./repo/ROADMAP.md)
 
 ## 📌 Заключение
 
