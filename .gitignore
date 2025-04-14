@@ -1,2 +1,3 @@
-server/graphmode
-server/gr
+backend/graphmode
+backend/gr
+backend/.venv
